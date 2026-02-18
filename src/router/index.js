@@ -1,14 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// ========== PUBLIC ROUTES (مكونات عامة) ==========
+// ========== PUBLIC ROUTES ==========
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import ApplyView from '../views/ApplyView.vue'
-import ProjectsView from '../views/ProjectsView.vue'
-import AboutView from '../views/AboutView.vue'
-import TeamView from '../views/TeamView.vue'
-import SpecializationsView from '../views/SpecializationsView.vue'
-import ContactView from '../views/ContactView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 
 const routes = [
@@ -19,51 +14,6 @@ const routes = [
     component: HomeView,
     meta: { 
       title: 'الرئيسية - TECH STORM',
-      requiresAuth: false 
-    }
-  },
-  {
-    path: '/projects',
-    name: 'projects',
-    component: ProjectsView,
-    meta: { 
-      title: 'المشاريع - TECH STORM',
-      requiresAuth: false 
-    }
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: AboutView,
-    meta: { 
-      title: 'عن الفريق - TECH STORM',
-      requiresAuth: false 
-    }
-  },
-  {
-    path: '/team',
-    name: 'team',
-    component: TeamView,
-    meta: { 
-      title: 'أعضاء الفريق - TECH STORM',
-      requiresAuth: false 
-    }
-  },
-  {
-    path: '/specializations',
-    name: 'specializations',
-    component: SpecializationsView,
-    meta: { 
-      title: 'التخصصات - TECH STORM',
-      requiresAuth: false 
-    }
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    component: ContactView,
-    meta: { 
-      title: 'تواصل معنا - TECH STORM',
       requiresAuth: false 
     }
   },
@@ -92,26 +42,25 @@ const routes = [
   {
     path: '/dashboard',
     component: () => import('../layouts/DashboardLayout.vue'),
-    meta: { 
-      requiresAuth: true
-    },
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
         name: 'dashboard',
         component: () => import('../views/dashboard/DashboardHome.vue'),
-        meta: { 
-          title: 'لوحة التحكم - TECH STORM'
-        }
+        meta: { title: 'لوحة التحكم - TECH STORM' }
       },
-      // ===== TASK ROUTES =====
+      {
+        path: 'profile',
+        name: 'dashboard-profile',
+        component: () => import('../views/dashboard/ProfileView.vue'),
+        meta: { title: 'الملف الشخصي - TECH STORM' }
+      },
       {
         path: 'tasks',
         name: 'dashboard-tasks',
         component: () => import('../views/dashboard/TasksView.vue'),
-        meta: { 
-          title: 'المهام - TECH STORM'
-        }
+        meta: { title: 'المهام - TECH STORM' }
       },
       {
         path: 'tasks/create',
@@ -119,16 +68,14 @@ const routes = [
         component: () => import('../views/dashboard/CreateTaskView.vue'),
         meta: { 
           title: 'إنشاء مهمة - TECH STORM',
-          requiresTaskCreation: true
+          requiresTaskCreation: true 
         }
       },
       {
         path: 'tasks/:id',
         name: 'dashboard-task-details',
         component: () => import('../views/dashboard/TaskDetailsView.vue'),
-        meta: { 
-          title: 'تفاصيل المهمة - TECH STORM'
-        }
+        meta: { title: 'تفاصيل المهمة - TECH STORM' }
       },
       {
         path: 'tasks/edit/:id',
@@ -136,43 +83,15 @@ const routes = [
         component: () => import('../views/dashboard/EditTaskView.vue'),
         meta: { 
           title: 'تعديل المهمة - TECH STORM',
-          requiresTaskCreation: true
-        }
-      },
-      // ===== OTHER DASHBOARD ROUTES =====
-      {
-        path: 'profile',
-        name: 'dashboard-profile',
-        component: () => import('../views/dashboard/ProfileView.vue'),
-        meta: { 
-          title: 'الملف الشخصي - TECH STORM'
+          requiresTaskCreation: true 
         }
       },
       {
         path: 'team',
         name: 'dashboard-team',
         component: () => import('../views/dashboard/TeamView.vue'),
-        meta: { 
-          title: 'الفريق - TECH STORM'
-        }
-      },
-      {
-        path: 'members',
-        name: 'dashboard-members',
-        component: () => import('../views/dashboard/MembersView.vue'),
-        meta: { 
-          title: 'الأعضاء - TECH STORM'
-        }
-      },
-      {
-        path: 'statistics',
-        name: 'dashboard-statistics',
-        component: () => import('../views/dashboard/StatisticsView.vue'),
-        meta: { 
-          title: 'الإحصائيات - TECH STORM'
-        }
+        meta: { title: 'الفريق - TECH STORM' }
       }
-      // ===== تم إزالة route الإعدادات =====
     ]
   },
 
@@ -182,75 +101,32 @@ const routes = [
     component: () => import('../layouts/DashboardLayout.vue'),
     meta: { 
       requiresAuth: true,
-      requiresLeader: true
+      requiresLeader: true 
     },
     children: [
       {
         path: '',
         redirect: '/admin/applicants'
       },
-      // ===== APPLICANT ROUTES =====
       {
         path: 'applicants',
         name: 'admin-applicants',
         component: () => import('../views/AdminApplicantsView.vue'),
-        meta: { 
-          title: 'طلبات الانضمام - TECH STORM'
-        }
+        meta: { title: 'طلبات الانضمام - TECH STORM' }
       },
       {
         path: 'accepted',
         name: 'admin-accepted',
         component: () => import('../views/admin/AdminAcceptedView.vue'),
-        meta: { 
-          title: 'الأعضاء المقبولين - TECH STORM'
-        }
-      },
-      {
-        path: 'rejected',
-        name: 'admin-rejected',
-        component: () => import('../views/admin/AdminRejectedView.vue'),
-        meta: { 
-          title: 'الطلبات المرفوضة - TECH STORM'
-        }
-      },
-      // ===== OTHER ADMIN ROUTES =====
-      {
-        path: 'departments',
-        name: 'admin-departments',
-        component: () => import('../views/admin/AdminDepartmentsView.vue'),
-        meta: { 
-          title: 'إدارة الأقسام - TECH STORM'
-        }
+        meta: { title: 'الأعضاء المقبولين - TECH STORM' }
       },
       {
         path: 'assign-heads',
         name: 'admin-assign-heads',
         component: () => import('../views/admin/AssignHeadsView.vue'),
-        meta: { 
-          title: 'تعيين رؤساء الأقسام - TECH STORM'
-        }
-      },
-      {
-        path: 'department-tasks',
-        name: 'admin-department-tasks',
-        component: () => import('../views/admin/DepartmentTasksView.vue'),
-        meta: { 
-          title: 'مهام الأقسام - TECH STORM'
-        }
+        meta: { title: 'تعيين الرؤساء - TECH STORM' }
       }
     ]
-  },
-
-  // ========== SIMPLE VIEW ROUTE ==========
-  {
-    path: '/simple-view',
-    name: 'simple-view',
-    component: () => import('../views/SimpleView.vue'),
-    meta: { 
-      title: 'عرض البيانات - TECH STORM',
-      requiresAuth: false 
-    }
   },
 
   // ========== 404 PAGE ==========
@@ -269,9 +145,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    }
+    if (savedPosition) return savedPosition
     if (to.hash) {
       return {
         el: to.hash,
@@ -285,7 +159,6 @@ const router = createRouter({
 // ========== ROUTE GUARDS ==========
 router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title || 'TECH STORM'
-  console.log('🔄 Navigating to:', to.path)
 
   const token = localStorage.getItem('auth_token')
   const userStr = localStorage.getItem('user')
@@ -303,6 +176,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
+  // صفحات الضيوف (login, apply)
   if (to.meta.requiresGuest) {
     if (isAuthenticated) {
       next('/dashboard')
@@ -312,24 +186,23 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
+  // الصفحات اللي محتاجة تسجيل دخول
   if (to.meta.requiresAuth) {
     if (!isAuthenticated) {
       next('/login')
       return
     }
 
-    if (to.meta.requiresLeader) {
-      if (userRole !== 'team_leader') {
-        console.warn('⛔ Access denied: Leader only')
-        next('/dashboard')
-        return
-      }
+    // الصفحات اللي لليدر فقط
+    if (to.meta.requiresLeader && userRole !== 'team_leader') {
+      next('/dashboard')
+      return
     }
 
+    // صفحات إنشاء المهام
     if (to.meta.requiresTaskCreation) {
       const canCreate = ['team_leader', 'deputy_leader', 'section_leader'].includes(userRole)
       if (!canCreate) {
-        console.warn('⛔ Access denied: Cannot create tasks')
         next('/dashboard')
         return
       }
