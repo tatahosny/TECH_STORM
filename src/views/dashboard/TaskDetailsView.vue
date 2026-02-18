@@ -352,7 +352,7 @@ const loadTask = async () => {
   
   try {
     const taskId = route.params.id
-    const response = await axios.get(`http://localhost:8000/api/tasks-public/${taskId}`)
+    const response = await axios.get(`http://TECHSTORM.kesug.com/api/tasks-public/${taskId}`)
 
     if (response.data.success) {
       const taskData = response.data.data
@@ -527,7 +527,7 @@ const getFullUrl = (path) => {
   let cleanPath = path.replace(/^storage\//, '')
   
   // إضافة base URL
-  return `http://localhost:8000/storage/${cleanPath}`
+  return `http://TECHSTORM.kesug.com/storage/${cleanPath}`
 }
 
 // دالة لتحديد أيقونة الملف
@@ -578,7 +578,7 @@ const toggleChecklistItem = async (index) => {
     const checklist = [...task.value.checklist]
     checklist[index].completed = !checklist[index].completed
     
-    const response = await axios.put(`http://localhost:8000/api/tasks-public/${task.value.id}`, {
+    const response = await axios.put(`http://TECHSTORM.kesug.com/api/tasks-public/${task.value.id}`, {
       checklist
     })
     
@@ -624,7 +624,7 @@ const submitUpdate = async () => {
     }
     
     const response = await axios.post(
-      `http://localhost:8000/api/tasks-public/${task.value.id}/updates`, 
+      `http://TECHSTORM.kesug.com/api/tasks-public/${task.value.id}/updates`, 
       formData,
       {
         headers: {
@@ -1677,4 +1677,5 @@ onMounted(() => {
 [dir="rtl"] .file-actions {
   justify-content: flex-start;
 }
+
 </style>
