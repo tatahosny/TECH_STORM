@@ -373,7 +373,7 @@ const loadDashboardData = async () => {
     // 1. جلب إحصائيات المستخدم
     try {
       debugInfo.value.steps.push('محاولة جلب الإحصائيات...')
-      const statsRes = await axios.get(`http://localhost:8000/api/users/${userId}/statistics`, {
+      const statsRes = await axios.get(`http://TECHSTORM.kesug.com/api/users/${userId}/statistics`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -405,7 +405,7 @@ const loadDashboardData = async () => {
     // 2. جلب المهام
     try {
       debugInfo.value.steps.push('محاولة جلب المهام...')
-      const tasksRes = await axios.get('http://localhost:8000/api/tasks/my-tasks?limit=5', {
+      const tasksRes = await axios.get('http://TECHSTORM.kesug.com/api/tasks/my-tasks?limit=5', {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -437,7 +437,7 @@ const loadDashboardData = async () => {
     // 3. جلب آخر التحديثات
     try {
       debugInfo.value.steps.push('محاولة جلب التحديثات...')
-      const updatesRes = await axios.get('http://localhost:8000/api/updates/recent?limit=10', {
+      const updatesRes = await axios.get('http://TECHSTORM.kesug.com/api/updates/recent?limit=10', {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -1221,4 +1221,5 @@ onMounted(() => {
     align-items: flex-start;
   }
 }
+
 </style>
