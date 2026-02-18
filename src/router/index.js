@@ -171,15 +171,8 @@ const routes = [
         meta: { 
           title: 'الإحصائيات - TECH STORM'
         }
-      },
-      {
-        path: 'settings',
-        name: 'dashboard-settings',
-        component: () => import('../views/dashboard/SettingsView.vue'),
-        meta: { 
-          title: 'الإعدادات - TECH STORM'
-        }
       }
+      // ===== تم إزالة route الإعدادات =====
     ]
   },
 
