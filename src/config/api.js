@@ -8,7 +8,7 @@ const getBaseURL = () => {
         return '/api';
     }
     // لو في development (local)
-    return 'http://TECHSTORM.kesug.com/api';
+    return 'https://TECHSTORM.kesug.com/api';
 };
 
 const api = axios.create({
@@ -78,3 +78,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+
