@@ -137,10 +137,7 @@
             <i class="fas fa-users"></i>
             <span class="nav-text" :class="{ 'hide-text': isSidebarCollapsed }">الفريق</span>
           </router-link>
-          <router-link to="/dashboard/settings" class="nav-link" active-class="active">
-            <i class="fas fa-cog"></i>
-            <span class="nav-text" :class="{ 'hide-text': isSidebarCollapsed }">الإعدادات</span>
-          </router-link>
+          <!-- ===== تم إزالة رابط الإعدادات ===== -->
         </div>
 
         <!-- ===== Logout ===== -->
@@ -195,10 +192,7 @@
                 <i class="fas fa-user-circle"></i>
                 <span>الملف الشخصي</span>
               </router-link>
-              <router-link to="/dashboard/settings" class="dropdown-item" @click="isUserMenuOpen = false">
-                <i class="fas fa-cog"></i>
-                <span>الإعدادات</span>
-              </router-link>
+              <!-- ===== تم إزالة رابط الإعدادات من القائمة المنسدلة ===== -->
               <div class="dropdown-divider"></div>
               <a @click="confirmLogout" class="dropdown-item logout">
                 <i class="fas fa-sign-out-alt"></i>
