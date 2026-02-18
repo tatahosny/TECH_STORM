@@ -615,7 +615,7 @@ const loadTasks = async () => {
     // استخدام API المحمي بدل العام لجلب المهام حسب الصلاحيات
     const token = localStorage.getItem('auth_token')
     
-    const response = await axios.get('http://localhost:8000/api/tasks', {
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/tasks', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -662,7 +662,7 @@ const loadTasks = async () => {
     
     // إذا فشل API المحمي، استخدم API العام مع تطبيق الفلتر محلياً
     try {
-      const publicResponse = await axios.get('http://localhost:8000/api/tasks-public')
+      const publicResponse = await axios.get('http://TECHSTORM.kesug.com/api/tasks-public')
       
       if (publicResponse.data.success) {
         let allTasks = publicResponse.data.data || []
@@ -750,7 +750,7 @@ const calculateStats = () => {
 // ========== Load Sections ==========
 const loadSections = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     if (response.data.success) {
       sections.value = response.data.data || []
     }
@@ -810,7 +810,7 @@ const deleteTask = async () => {
   try {
     const token = localStorage.getItem('auth_token')
     
-    const response = await axios.delete(`http://localhost:8000/api/tasks/${selectedTask.value.id}`, {
+    const response = await axios.delete(`http://TECHSTORM.kesug.com/api/tasks/${selectedTask.value.id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -828,7 +828,7 @@ const deleteTask = async () => {
     
     // إذا فشل API المحمي، جرب العام
     try {
-      const publicResponse = await axios.delete(`http://localhost:8000/api/tasks-public/${selectedTask.value.id}`)
+      const publicResponse = await axios.delete(`http://TECHSTORM.kesug.com/api/tasks-public/${selectedTask.value.id}`)
       
       if (publicResponse.data.success) {
         closeDeleteModal()
@@ -1865,4 +1865,5 @@ onMounted(() => {
   left: auto;
   right: 0;
 }
+
 </style>
