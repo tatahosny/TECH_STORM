@@ -22,11 +22,11 @@
         </div>
         <div class="stat-item">
           <span class="stat-label">رؤساء أقسام</span>
-          <span class="stat-value">{{ Object.keys(departmentHeads).length }}</span>
+          <span class="stat-value">{{ departmentHeadsCount }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">رؤساء فروع</span>
-          <span class="stat-value">{{ Object.keys(subDepartmentLeaders).length }}</span>
+          <span class="stat-value">{{ subDepartmentLeadersCount }}</span>
         </div>
       </div>
     </div>
@@ -69,11 +69,11 @@
             <div class="current-head-section">
               <h3>رئيس القسم الحالي</h3>
               <div v-if="departmentHeads[dept.id]" class="current-head">
-                <div class="head-avatar" :style="{ backgroundColor: getAvatarColor(departmentHeads[dept.id].fullName) }">
-                  {{ getUserInitials(departmentHeads[dept.id].fullName) }}
+                <div class="head-avatar" :style="{ backgroundColor: getAvatarColor(departmentHeads[dept.id].name) }">
+                  {{ getUserInitials(departmentHeads[dept.id].name) }}
                 </div>
                 <div class="head-info">
-                  <strong>{{ departmentHeads[dept.id].fullName }}</strong>
+                  <strong>{{ departmentHeads[dept.id].name }}</strong>
                   <span>{{ departmentHeads[dept.id].email }}</span>
                 </div>
                 <button @click="removeDepartmentHead(dept.id)" class="btn-remove">
@@ -92,8 +92,8 @@
               <div class="assign-form">
                 <select v-model="selectedHead[dept.id]" class="form-select">
                   <option value="">اختر عضواً...</option>
-                  <option v-for="member in getAvailableDepartmentMembers(dept.id)" :key="member.uid" :value="member.uid">
-                    {{ member.fullName }} ({{ member.email }})
+                  <option v-for="member in getAvailableDepartmentMembers(dept.id)" :key="member.id" :value="member.id">
+                    {{ member.name }} ({{ member.email }})
                   </option>
                 </select>
                 <button 
@@ -111,13 +111,13 @@
             <div class="members-section">
               <h3>أعضاء القسم</h3>
               <div class="members-list">
-                <div v-for="member in getDepartmentMembers(dept.id)" :key="member.uid" class="member-item">
-                  <div class="member-avatar" :style="{ backgroundColor: getAvatarColor(member.fullName) }">
-                    {{ getUserInitials(member.fullName) }}
+                <div v-for="member in getDepartmentMembers(dept.id)" :key="member.id" class="member-item">
+                  <div class="member-avatar" :style="{ backgroundColor: getAvatarColor(member.name) }">
+                    {{ getUserInitials(member.name) }}
                   </div>
                   <div class="member-info">
-                    <strong>{{ member.fullName }}</strong>
-                    <span>{{ getRoleName(member.role?.type) }}</span>
+                    <strong>{{ member.name }}</strong>
+                    <span>{{ getRoleName(member.role) }}</span>
                   </div>
                 </div>
                 <div v-if="!getDepartmentMembers(dept.id).length" class="no-members">
@@ -139,12 +139,12 @@
             <i :class="dept.icon" :style="{ color: dept.color }"></i>
             <h2>{{ dept.name }}</h2>
             <span class="department-head-badge" v-if="departmentHeads[dept.id]">
-              رئيس القسم: {{ departmentHeads[dept.id].fullName }}
+              رئيس القسم: {{ departmentHeads[dept.id].name }}
             </span>
           </div>
 
           <div class="department-body">
-            <div v-for="sub in dept.subDepartments" :key="sub.id" class="sub-department-item">
+            <div v-for="sub in dept.subDepartments || []" :key="sub.id" class="sub-department-item">
               <div class="sub-header">
                 <i :class="sub.icon" :style="{ color: sub.color }"></i>
                 <h4>{{ sub.name }}</h4>
@@ -153,11 +153,11 @@
               <!-- Current Sub-Department Leader -->
               <div class="current-leader-section">
                 <div v-if="subDepartmentLeaders[`${dept.id}_${sub.id}`]" class="current-leader">
-                  <div class="leader-avatar" :style="{ backgroundColor: getAvatarColor(subDepartmentLeaders[`${dept.id}_${sub.id}`].fullName) }">
-                    {{ getUserInitials(subDepartmentLeaders[`${dept.id}_${sub.id}`].fullName) }}
+                  <div class="leader-avatar" :style="{ backgroundColor: getAvatarColor(subDepartmentLeaders[`${dept.id}_${sub.id}`].name) }">
+                    {{ getUserInitials(subDepartmentLeaders[`${dept.id}_${sub.id}`].name) }}
                   </div>
                   <div class="leader-info">
-                    <strong>{{ subDepartmentLeaders[`${dept.id}_${sub.id}`].fullName }}</strong>
+                    <strong>{{ subDepartmentLeaders[`${dept.id}_${sub.id}`].name }}</strong>
                     <span>{{ subDepartmentLeaders[`${dept.id}_${sub.id}`].email }}</span>
                   </div>
                   <button @click="removeSubDepartmentLeader(dept.id, sub.id)" class="btn-remove small">
@@ -174,8 +174,8 @@
               <div class="assign-section small">
                 <select v-model="selectedSubLeader[`${dept.id}_${sub.id}`]" class="form-select small">
                   <option value="">تعيين رئيس فرع...</option>
-                  <option v-for="member in getAvailableSubDepartmentMembers(dept.id, sub.id)" :key="member.uid" :value="member.uid">
-                    {{ member.fullName }}
+                  <option v-for="member in getAvailableSubDepartmentMembers(dept.id, sub.id)" :key="member.id" :value="member.id">
+                    {{ member.name }}
                   </option>
                 </select>
                 <button 
@@ -190,12 +190,12 @@
               <!-- Sub-Department Members -->
               <div class="members-section small">
                 <div class="members-list small">
-                  <div v-for="member in getSubDepartmentMembers(dept.id, sub.id)" :key="member.uid" class="member-item small">
-                    <div class="member-avatar small" :style="{ backgroundColor: getAvatarColor(member.fullName) }">
-                      {{ getUserInitials(member.fullName) }}
+                  <div v-for="member in getSubDepartmentMembers(dept.id, sub.id)" :key="member.id" class="member-item small">
+                    <div class="member-avatar small" :style="{ backgroundColor: getAvatarColor(member.name) }">
+                      {{ getUserInitials(member.name) }}
                     </div>
                     <div class="member-info">
-                      <strong>{{ member.fullName }}</strong>
+                      <strong>{{ member.name }}</strong>
                     </div>
                   </div>
                   <div v-if="!getSubDepartmentMembers(dept.id, sub.id).length" class="no-members small">
@@ -213,142 +213,156 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useDepartments } from '@/composables/useDepartments'
-import { useTeamMembers } from '@/composables/useTeamMembers'
-
-const { 
-  departments, 
-  departmentHeads, 
-  subDepartmentLeaders, 
-  loading,
-  loadDepartments,
-  assignDepartmentHead,
-  assignSubDepartmentLeader,
-  removeDepartmentHead,
-  removeSubDepartmentLeader,
-  getDepartmentMembers,
-  getSubDepartmentMembers
-} = useDepartments()
-
-const { teamMembers, loadTeamMembers } = useTeamMembers()
+// تم إزالة import useTeamMembers غير المستخدم
 
 // ========== State ==========
 const activeTab = ref('department-heads')
 const selectedHead = ref({})
 const selectedSubLeader = ref({})
 
+// ========== Composables ==========
+const { 
+  departments, 
+  departmentHeads, 
+  subDepartmentLeaders, 
+  loading,
+  fetchDepartments,
+  assignDepartmentHead: assignHead,
+  assignSubDepartmentLeader: assignSubLeader,
+  removeDepartmentHead: removeHead,
+  removeSubDepartmentLeader: removeSubLeader,
+  getDepartmentMembers,
+  getSubDepartmentMembers,
+  getAvailableDepartmentMembers,
+  getAvailableSubDepartmentMembers
+} = useDepartments()
+
+// ========== Computed ==========
+const departmentHeadsCount = computed(() => {
+  return Object.keys(departmentHeads.value || {}).length
+})
+
+const subDepartmentLeadersCount = computed(() => {
+  return Object.keys(subDepartmentLeaders.value || {}).length
+})
+
 // ========== Methods ==========
 const getUserInitials = (name) => {
   if (!name) return 'U'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  const parts = name.split(' ').filter(p => p.length > 0)
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase()
+  return 'U'
 }
 
 const getAvatarColor = (name) => {
   if (!name) return '#FFD700'
   const colors = ['#FFD700', '#FFA500', '#FF8C00', '#FF7F50', '#FF6B6B', '#10b981', '#3b82f6', '#8b5cf6']
-  return colors[name.length % colors.length]
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return colors[hash % colors.length]
 }
 
 const getRoleName = (role) => {
   const roles = {
-    leader: '👑 ليدر',
-    department_head: '👑 رئيس قسم',
-    sub_leader: '⚡ رئيس فرع',
-    member: '👤 عضو'
+    'team_leader': '👑 قائد الفريق',
+    'deputy_leader': '⭐ نائب القائد',
+    'section_leader': '👥 رئيس قسم',
+    'member': '👤 عضو'
   }
   return roles[role] || role
 }
 
-const getAvailableDepartmentMembers = (departmentId) => {
-  return teamMembers.value.filter(member => 
-    (member.role?.department === departmentId || member.roleData?.department === departmentId) &&
-    !member.isDepartmentHead &&
-    member.role?.type !== 'leader' &&
-    member.role?.type !== 'vice_leader'
-  )
-}
-
-const getAvailableSubDepartmentMembers = (departmentId, subDepartmentId) => {
-  return teamMembers.value.filter(member => 
-    (member.role?.department === departmentId || member.roleData?.department === departmentId) &&
-    (member.role?.subDepartment === subDepartmentId || member.roleData?.subDepartment === subDepartmentId) &&
-    !member.isSubLeader &&
-    !member.isDepartmentHead &&
-    member.role?.type !== 'leader'
-  )
-}
-
-const assignDepartmentHeadAction = async (departmentId) => {
+const assignDepartmentHead = async (departmentId) => {
   const userId = selectedHead.value[departmentId]
   if (!userId) return
   
-  const member = teamMembers.value.find(m => m.uid === userId)
-  if (!member) return
+  const success = await assignHead(departmentId, userId)
   
-  const result = await assignDepartmentHead(departmentId, userId, member)
-  
-  if (result.success) {
+  if (success) {
     selectedHead.value[departmentId] = ''
-    alert('✅ تم تعيين رئيس القسم بنجاح')
+    // استخدام نظام التنبيهات إذا كان موجود
+    if (window.$alert) {
+      window.$alert.success('تم تعيين رئيس القسم بنجاح')
+    } else {
+      alert('✅ تم تعيين رئيس القسم بنجاح')
+    }
   } else {
-    alert('❌ فشل في تعيين رئيس القسم: ' + result.error)
+    if (window.$alert) {
+      window.$alert.error('فشل في تعيين رئيس القسم')
+    } else {
+      alert('❌ فشل في تعيين رئيس القسم')
+    }
   }
 }
 
-const assignSubDepartmentLeaderAction = async (departmentId, subDepartmentId) => {
+const assignSubDepartmentLeader = async (departmentId, subDepartmentId) => {
   const key = `${departmentId}_${subDepartmentId}`
   const userId = selectedSubLeader.value[key]
   if (!userId) return
   
-  const member = teamMembers.value.find(m => m.uid === userId)
-  if (!member) return
+  const success = await assignSubLeader(departmentId, subDepartmentId, userId)
   
-  const result = await assignSubDepartmentLeader(departmentId, subDepartmentId, userId, member)
-  
-  if (result.success) {
+  if (success) {
     selectedSubLeader.value[key] = ''
-    alert('✅ تم تعيين رئيس الفرع بنجاح')
+    if (window.$alert) {
+      window.$alert.success('تم تعيين رئيس الفرع بنجاح')
+    } else {
+      alert('✅ تم تعيين رئيس الفرع بنجاح')
+    }
   } else {
-    alert('❌ فشل في تعيين رئيس الفرع: ' + result.error)
+    if (window.$alert) {
+      window.$alert.error('فشل في تعيين رئيس الفرع')
+    } else {
+      alert('❌ فشل في تعيين رئيس الفرع')
+    }
   }
 }
 
-const removeDepartmentHeadAction = async (departmentId) => {
+const removeDepartmentHead = async (departmentId) => {
   if (!confirm('هل أنت متأكد من إزالة رئيس القسم؟')) return
   
-  const result = await removeDepartmentHead(departmentId)
+  const success = await removeHead(departmentId)
   
-  if (result.success) {
-    alert('✅ تم إزالة رئيس القسم بنجاح')
+  if (success) {
+    if (window.$alert) {
+      window.$alert.success('تم إزالة رئيس القسم بنجاح')
+    } else {
+      alert('✅ تم إزالة رئيس القسم بنجاح')
+    }
   } else {
-    alert('❌ فشل في إزالة رئيس القسم: ' + result.error)
+    if (window.$alert) {
+      window.$alert.error('فشل في إزالة رئيس القسم')
+    } else {
+      alert('❌ فشل في إزالة رئيس القسم')
+    }
   }
 }
 
-const removeSubDepartmentLeaderAction = async (departmentId, subDepartmentId) => {
+const removeSubDepartmentLeader = async (departmentId, subDepartmentId) => {
   if (!confirm('هل أنت متأكد من إزالة رئيس الفرع؟')) return
   
-  const result = await removeSubDepartmentLeader(departmentId, subDepartmentId)
+  const success = await removeSubLeader(departmentId, subDepartmentId)
   
-  if (result.success) {
-    alert('✅ تم إزالة رئيس الفرع بنجاح')
+  if (success) {
+    if (window.$alert) {
+      window.$alert.success('تم إزالة رئيس الفرع بنجاح')
+    } else {
+      alert('✅ تم إزالة رئيس الفرع بنجاح')
+    }
   } else {
-    alert('❌ فشل في إزالة رئيس الفرع: ' + result.error)
+    if (window.$alert) {
+      window.$alert.error('فشل في إزالة رئيس الفرع')
+    } else {
+      alert('❌ فشل في إزالة رئيس الفرع')
+    }
   }
 }
 
 // ========== Lifecycle ==========
-let unsubscribeDepts, unsubscribeMembers
-
-onMounted(() => {
-  unsubscribeDepts = loadDepartments()
-  unsubscribeMembers = loadTeamMembers()
-})
-
-onUnmounted(() => {
-  if (unsubscribeDepts) unsubscribeDepts()
-  if (unsubscribeMembers) unsubscribeMembers()
+onMounted(async () => {
+  await fetchDepartments()
 })
 </script>
 
@@ -389,9 +403,60 @@ onUnmounted(() => {
   animation: starsMove 100s linear infinite;
 }
 
+.twinkling-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(1px 1px at 120px 330px, #FFD700, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 240px 170px, #FFD700, rgba(0,0,0,0));
+  background-repeat: no-repeat;
+  background-size: 300px 300px;
+  opacity: 0.2;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.gradient-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.08;
+  animation: floatSphere 25s infinite;
+}
+
+.sphere-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+  top: -200px;
+  right: -200px;
+}
+
+.sphere-2 {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(255,215,0,0.08), rgba(255,215,0,0.02));
+  bottom: -300px;
+  left: -200px;
+  animation-delay: -8s;
+}
+
 @keyframes starsMove {
   from { transform: translateY(0); }
   to { transform: translateY(-200px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes floatSphere {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -40px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.95); }
 }
 
 /* ===== Page Header ===== */
@@ -402,6 +467,8 @@ onUnmounted(() => {
   margin-bottom: 30px;
   position: relative;
   z-index: 2;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .page-header h1 {
@@ -423,6 +490,7 @@ onUnmounted(() => {
   padding: 12px;
   border-radius: 60px;
   border: 1px solid rgba(255,215,0,0.2);
+  flex-wrap: wrap;
 }
 
 .stat-item {
@@ -457,6 +525,7 @@ onUnmounted(() => {
   border: 1px solid rgba(255,215,0,0.2);
   position: relative;
   z-index: 2;
+  flex-wrap: wrap;
 }
 
 .tab {
@@ -474,6 +543,7 @@ onUnmounted(() => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  min-width: 200px;
 }
 
 .tab.active {
@@ -506,6 +576,7 @@ onUnmounted(() => {
   gap: 15px;
   border-bottom: 1px solid rgba(255,215,0,0.1);
   position: relative;
+  flex-wrap: wrap;
 }
 
 .department-header i {
@@ -520,14 +591,13 @@ onUnmounted(() => {
 }
 
 .department-head-badge {
-  position: absolute;
-  left: 25px;
   background: rgba(255,215,0,0.1);
   padding: 6px 15px;
   border-radius: 30px;
   font-size: 12px;
   color: #FFD700;
   border: 1px solid #FFD700;
+  margin-right: auto;
 }
 
 .department-body {
@@ -556,6 +626,7 @@ onUnmounted(() => {
   padding: 15px;
   background: rgba(255,215,0,0.05);
   border-radius: 15px;
+  flex-wrap: wrap;
 }
 
 .head-avatar {
@@ -569,6 +640,7 @@ onUnmounted(() => {
   font-weight: 700;
   color: #000;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .head-info {
@@ -576,6 +648,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 150px;
 }
 
 .head-info strong {
@@ -609,6 +682,7 @@ onUnmounted(() => {
 .assign-form {
   display: flex;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .form-select {
@@ -619,12 +693,18 @@ onUnmounted(() => {
   border-radius: 12px;
   color: #fff;
   font-size: 14px;
+  min-width: 200px;
 }
 
 .form-select:focus {
   outline: none;
   border-color: #FFD700;
   background: rgba(255,215,0,0.05);
+}
+
+.form-select option {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 .btn-assign {
@@ -639,6 +719,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .btn-assign:hover:not(:disabled) {
@@ -669,6 +750,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .btn-remove:hover {
@@ -689,6 +771,19 @@ onUnmounted(() => {
   max-height: 200px;
   overflow-y: auto;
   padding-right: 5px;
+}
+
+.members-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.members-list::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.02);
+}
+
+.members-list::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 4px;
 }
 
 .member-item {
@@ -716,6 +811,7 @@ onUnmounted(() => {
   font-weight: 700;
   color: #000;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .member-avatar.small {
@@ -764,6 +860,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin-bottom: 15px;
+}
+
+.sub-department-item:last-child {
+  margin-bottom: 0;
 }
 
 .sub-header {
@@ -772,6 +873,7 @@ onUnmounted(() => {
   gap: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255,215,0,0.1);
+  flex-wrap: wrap;
 }
 
 .sub-header i {
@@ -795,6 +897,7 @@ onUnmounted(() => {
   padding: 12px;
   background: rgba(139,92,246,0.05);
   border-radius: 12px;
+  flex-wrap: wrap;
 }
 
 .leader-avatar {
@@ -808,6 +911,7 @@ onUnmounted(() => {
   font-weight: 700;
   color: #000;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .leader-info {
@@ -815,6 +919,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 150px;
 }
 
 .leader-info strong {
@@ -835,47 +940,11 @@ onUnmounted(() => {
   background: rgba(255,255,255,0.02);
   border-radius: 12px;
   color: #b0b0b0;
+  flex-wrap: wrap;
 }
 
 .no-leader i {
   font-size: 16px;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 1024px) {
-  .departments-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .header-stats {
-    width: 100%;
-    justify-content: space-around;
-  }
-  
-  .tabs {
-    flex-direction: column;
-  }
-  
-  .assign-form {
-    flex-direction: column;
-  }
-  
-  .department-header {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .department-head-badge {
-    position: static;
-    margin-top: 10px;
-  }
 }
 
 /* ===== Loading State ===== */
@@ -894,5 +963,101 @@ onUnmounted(() => {
 
 .loading-state p {
   color: #b0b0b0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .departments-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .assign-heads-view {
+    padding: 20px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-stats {
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .tabs {
+    flex-direction: column;
+  }
+  
+  .tab {
+    width: 100%;
+  }
+  
+  .assign-form {
+    flex-direction: column;
+  }
+  
+  .form-select {
+    width: 100%;
+  }
+  
+  .btn-assign {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .department-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .department-head-badge {
+    margin-right: 0;
+  }
+  
+  .current-head {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .head-info {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-item {
+    padding: 5px 10px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .department-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .member-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .member-info {
+    align-items: center;
+  }
+}
+
+/* ===== RTL Support ===== */
+[dir="rtl"] .department-head-badge {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+[dir="rtl"] .members-list {
+  padding-right: 0;
+  padding-left: 5px;
 }
 </style>
