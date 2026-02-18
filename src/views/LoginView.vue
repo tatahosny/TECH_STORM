@@ -2,18 +2,23 @@
   <div class="login-page" dir="rtl">
     <!-- خلفية فضائية ذهبية متحركة -->
     <div class="space-bg">
+      <!-- نجوم ذهبية -->
       <div class="stars"></div>
       <div class="twinkling-stars"></div>
       
+      <!-- كواكب ذهبية -->
       <div class="planet planet-1"></div>
       <div class="planet planet-2"></div>
       <div class="planet planet-3"></div>
       
+      <!-- سديم ذهبي -->
       <div class="nebula nebula-1"></div>
       <div class="nebula nebula-2"></div>
       
+      <!-- أشعة ذهبية -->
       <div class="golden-rays"></div>
       
+      <!-- جرادينت متحرك -->
       <div class="gradient-bg">
         <div class="gradient-sphere sphere-1"></div>
         <div class="gradient-sphere sphere-2"></div>
@@ -65,6 +70,7 @@
             </div>
             
             <div class="hierarchy-tree">
+              <!-- المستوى 1 - ليدر التيم -->
               <div class="hierarchy-node level-1">
                 <div class="node-icon">
                   <i class="fas fa-crown"></i>
@@ -77,6 +83,7 @@
                 <div class="node-line"></div>
               </div>
               
+              <!-- المستوى 2 - نائب ليدر -->
               <div class="hierarchy-node level-2">
                 <div class="node-icon">
                   <i class="fas fa-star"></i>
@@ -89,6 +96,7 @@
                 <div class="node-line"></div>
               </div>
               
+              <!-- المستوى 3 - ليدر قسم -->
               <div class="hierarchy-node level-3">
                 <div class="node-icon">
                   <i class="fas fa-user-tie"></i>
@@ -101,6 +109,7 @@
                 <div class="node-line"></div>
               </div>
               
+              <!-- المستوى 4 - عضو -->
               <div class="hierarchy-node level-4">
                 <div class="node-icon">
                   <i class="fas fa-user"></i>
@@ -148,6 +157,7 @@
 
         <!-- الجانب الأيسر - بطاقة تسجيل الدخول -->
         <div class="left-side">
+          <!-- بطاقة تسجيل الدخول -->
           <div class="login-card">
             <div class="login-header">
               <div class="header-icon">
@@ -162,6 +172,7 @@
               </div>
             </div>
 
+            <!-- رسالة الخطأ المتحركة -->
             <transition name="slide-fade">
               <div v-if="errorMessage" class="error-message">
                 <div class="error-content">
@@ -172,6 +183,7 @@
               </div>
             </transition>
 
+            <!-- رسالة النجاح المتحركة -->
             <transition name="slide-fade">
               <div v-if="successMessage" class="success-message">
                 <div class="success-content">
@@ -181,6 +193,7 @@
               </div>
             </transition>
 
+            <!-- نموذج تسجيل الدخول -->
             <form @submit.prevent="handleLogin" class="login-form">
               <div class="form-group">
                 <label>
@@ -254,6 +267,7 @@
               </button>
             </form>
 
+            <!-- بيانات تجريبية للاختبار -->
             <div class="demo-accounts">
               <p class="demo-title">📋 بيانات تجريبية:</p>
               <div class="demo-item" @click="fillDemoAccount('leader')">
@@ -270,6 +284,7 @@
               </div>
             </div>
 
+            <!-- فوتر البطاقة -->
             <div class="login-footer">
               <div class="footer-decoration">
                 <span class="decoration-line"></span>
@@ -289,6 +304,7 @@
             </div>
           </div>
 
+          <!-- رابط العودة -->
           <div class="back-to-home">
             <router-link to="/" class="btn-back">
               <i class="fas fa-home"></i>
@@ -314,6 +330,7 @@ const errorMessage = ref('');
 const successMessage = ref('');
 const router = useRouter();
 
+// تعبئة بيانات تجريبية
 const fillDemoAccount = (type) => {
   if (type === 'leader') {
     email.value = 'leader@techstorm.team';
@@ -343,52 +360,32 @@ const handleLogin = async () => {
       password: password.value
     });
 
-    console.log('✅ Login successful:', response.data);
-
-    // ✅ هنا التعديل المهم - تخزين البيانات
-    if (response.data) {
-      // لو البيانات جاية في response.data مباشرة
-      if (response.data.token) {
-        localStorage.setItem('auth_token', response.data.token);
-      }
+    if (response.data.success) {
+      // حفظ البيانات
+      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       
-      if (response.data.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
-      
-      // لو البيانات جاية في response.data.data
-      if (response.data.data?.token) {
-        localStorage.setItem('auth_token', response.data.data.token);
-      }
-      
-      if (response.data.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-      }
-      
-      successMessage.value = '✅ تم تسجيل الدخول بنجاح! جاري التحويل...';
+      successMessage.value = 'تم تسجيل الدخول بنجاح! جاري التحويل...';
       
       // تأخير بسيط قبل التحويل
       setTimeout(() => {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userRole = user?.role;
-        
-        if (userRole === 'team_leader') {
+        // التوجيه حسب الدور
+        const role = response.data.user.role;
+        if (role === 'team_leader') {
           router.push('/admin/applicants');
         } else {
           router.push('/dashboard');
         }
       }, 1000);
-    } else {
-      errorMessage.value = '❌ خطأ في البيانات المرسلة من السيرفر';
     }
   } catch (error) {
-    console.error('❌ Login error:', error);
+    console.error('Login error:', error);
     if (error.response) {
-      errorMessage.value = error.response.data?.error || '❌ خطأ في البريد أو كلمة المرور';
+      errorMessage.value = error.response.data?.error || 'خطأ في البريد أو كلمة المرور';
     } else if (error.request) {
-      errorMessage.value = '❌ لا يمكن الاتصال بالسيرفر';
+      errorMessage.value = 'لا يمكن الاتصال بالسيرفر. تأكد من تشغيل Laravel';
     } else {
-      errorMessage.value = '❌ حدث خطأ غير متوقع';
+      errorMessage.value = 'حدث خطأ غير متوقع';
     }
   } finally {
     loading.value = false;
@@ -441,6 +438,7 @@ const handleLogin = async () => {
   background: radial-gradient(ellipse at bottom, #0a0a1a 0%, #000000 100%);
 }
 
+/* النجوم */
 .stars {
   position: absolute;
   top: 0;
@@ -481,6 +479,7 @@ const handleLogin = async () => {
   animation: twinkle 4s ease-in-out infinite;
 }
 
+/* كواكب ذهبية */
 .planet {
   position: absolute;
   border-radius: 50%;
@@ -515,6 +514,7 @@ const handleLogin = async () => {
   filter: blur(20px);
 }
 
+/* سديم ذهبي */
 .nebula {
   position: absolute;
   border-radius: 50%;
@@ -539,6 +539,7 @@ const handleLogin = async () => {
   animation: floatNebula 40s infinite reverse;
 }
 
+/* أشعة ذهبية */
 .golden-rays {
   position: absolute;
   top: 50%;
@@ -949,6 +950,7 @@ const handleLogin = async () => {
   font-size: 0.95rem;
 }
 
+/* ===== شجرة الهرم القيادي ===== */
 .hierarchy-tree {
   display: flex;
   flex-direction: column;
@@ -1054,6 +1056,7 @@ const handleLogin = async () => {
   display: none;
 }
 
+/* ===== إحصائيات ===== */
 .permissions-footer {
   margin-top: 30px;
   padding-top: 25px;
@@ -1106,6 +1109,7 @@ const handleLogin = async () => {
   font-style: italic;
 }
 
+/* ===== بطاقة المهمة ===== */
 .mission-card {
   display: flex;
   align-items: center;
@@ -1153,6 +1157,7 @@ const handleLogin = async () => {
   line-height: 1.6;
 }
 
+/* ===== الجانب الأيسر - بطاقة تسجيل الدخول ===== */
 .left-side {
   display: flex;
   flex-direction: column;
@@ -1254,6 +1259,7 @@ const handleLogin = async () => {
   font-size: 1.1rem;
 }
 
+/* ===== رسالة الخطأ ===== */
 .error-message {
   background: rgba(255, 107, 107, 0.1);
   border: 1px solid var(--error-color);
@@ -1295,6 +1301,7 @@ const handleLogin = async () => {
   to { width: 0%; }
 }
 
+/* ===== رسالة النجاح ===== */
 .success-message {
   background: rgba(81, 207, 102, 0.1);
   border: 1px solid var(--success-color);
@@ -1335,6 +1342,7 @@ const handleLogin = async () => {
   transform: translateY(-20px);
 }
 
+/* ===== نموذج تسجيل الدخول ===== */
 .login-form {
   margin-bottom: 30px;
 }
@@ -1525,6 +1533,7 @@ const handleLogin = async () => {
   font-size: 1.1rem;
 }
 
+/* ===== الحسابات التجريبية ===== */
 .demo-accounts {
   margin-top: 25px;
   padding: 15px;
@@ -1566,6 +1575,7 @@ const handleLogin = async () => {
   margin-left: 5px;
 }
 
+/* ===== فوتر البطاقة ===== */
 .login-footer {
   text-align: center;
   margin-top: 30px;
@@ -1664,6 +1674,7 @@ const handleLogin = async () => {
   transform: scale(1.1);
 }
 
+/* ===== RTL مخصص ===== */
 [dir="rtl"] .input-prefix {
   right: 20px;
   left: auto;
@@ -1705,6 +1716,7 @@ const handleLogin = async () => {
   left: 30px;
 }
 
+/* ===== Responsive ===== */
 @media (max-width: 992px) {
   .brand-title {
     font-size: 2.2rem;
@@ -1792,6 +1804,7 @@ const handleLogin = async () => {
   }
 }
 
+/* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -1810,4 +1823,3 @@ const handleLogin = async () => {
   background: var(--accent-color);
 }
 </style>
-
