@@ -1070,7 +1070,7 @@ const copyAllCredentials = (member) => {
 const loadMembers = async () => {
   loading.value = true
   try {
-    const response = await axios.get('http://localhost:8000/api/users-public')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/users-public')
     if (response.data.success) {
       allMembers.value = response.data.data || []
     }
@@ -1083,7 +1083,7 @@ const loadMembers = async () => {
 
 const loadSections = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     if (response.data.success) {
       sections.value = response.data.data || []
     }
@@ -1094,7 +1094,7 @@ const loadSections = async () => {
 
 const loadCounts = async () => {
   try {
-    const applicantsRes = await axios.get('http://localhost:8000/api/show-applicants')
+    const applicantsRes = await axios.get('http://TECHSTORM.kesug.com/api/show-applicants')
     if (applicantsRes.data.success) {
       const applicants = applicantsRes.data.data || []
       pendingCount.value = applicants.filter(a => a.status === 'pending').length
@@ -1157,7 +1157,7 @@ const saveMember = async () => {
   saving.value = true
   try {
     const response = await axios.post(
-      `http://localhost:8000/api/users-update/${selectedMember.value.id}`,
+      `http://TECHSTORM.kesug.com/api/users-update/${selectedMember.value.id}`,
       editForm
     )
     
@@ -1211,7 +1211,7 @@ const savePassword = async () => {
   passwordSaving.value = true
   try {
     const response = await axios.post(
-      `http://localhost:8000/api/users-password/${selectedMember.value.id}`,
+      `http://TECHSTORM.kesug.com/api/users-password/${selectedMember.value.id}`,
       { password: passwordForm.new_password }
     )
     
@@ -1245,7 +1245,7 @@ const toggleStatus = async (member) => {
   
   try {
     const response = await axios.post(
-      `http://localhost:8000/api/users-status/${member.id}`,
+      `http://TECHSTORM.kesug.com/api/users-status/${member.id}`,
       { status: newStatus }
     )
     
@@ -3270,4 +3270,5 @@ select option:hover {
 
 /* ===== النهاية ===== */
 /* جميع الحقوق محفوظة لفريق TECH STORM 2026 */
+
 </style>
