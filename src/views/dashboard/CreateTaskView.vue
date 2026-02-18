@@ -105,7 +105,7 @@ const form = reactive({
 
 const loadSections = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     if (response.data.success) {
       sections.value = response.data.data
     }
@@ -121,7 +121,7 @@ const onSectionChange = async () => {
   }
   
   try {
-    const response = await axios.get(`http://localhost:8000/api/sections/${form.section_id}/members`)
+    const response = await axios.get(`http://TECHSTORM.kesug.com/api/sections/${form.section_id}/members`)
     if (response.data.success) {
       availableUsers.value = response.data.data
     }
@@ -134,7 +134,7 @@ const submitTask = async () => {
   submitting.value = true
   try {
     // استخدم الرابط العام بدل المحمي
-    const response = await axios.post('http://localhost:8000/api/tasks-public', form)
+    const response = await axios.post('http://TECHSTORM.kesug.com/api/tasks-public', form)
     
     if (response.data.success) {
       alert('✅ تم إنشاء المهمة بنجاح')
@@ -426,4 +426,5 @@ onMounted(() => {
     font-size: 1.5rem;
   }
 }
+
 </style>
