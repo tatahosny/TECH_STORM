@@ -150,7 +150,7 @@ const loadTask = async () => {
   
   try {
     const taskId = route.params.id
-    const response = await axios.get(`http://localhost:8000/api/tasks-public/${taskId}`)
+    const response = await axios.get(`http://TECHSTORM.kesug.com/api/tasks-public/${taskId}`)
 
     if (response.data.success) {
       task.value = response.data.data
@@ -180,7 +180,7 @@ const loadTask = async () => {
 
 const loadSections = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     if (response.data.success) {
       sections.value = response.data.data || []
     }
@@ -191,7 +191,7 @@ const loadSections = async () => {
 
 const loadSectionUsers = async (sectionId) => {
   try {
-    const response = await axios.get(`http://localhost:8000/api/sections/${sectionId}/members`)
+    const response = await axios.get(`http://TECHSTORM.kesug.com/api/sections/${sectionId}/members`)
     if (response.data.success) {
       availableUsers.value = response.data.data || []
     }
@@ -213,7 +213,7 @@ const updateTask = async () => {
   submitting.value = true
   
   try {
-    const response = await axios.put(`http://localhost:8000/api/tasks-public/${task.value.id}`, form)
+    const response = await axios.put(`http://TECHSTORM.kesug.com/api/tasks-public/${task.value.id}`, form)
 
     if (response.data.success) {
       alert('✅ تم تحديث المهمة بنجاح')
@@ -576,4 +576,5 @@ onMounted(() => {
 [dir="rtl"] .btn-back:hover {
   transform: translateX(5px);
 }
+
 </style>
