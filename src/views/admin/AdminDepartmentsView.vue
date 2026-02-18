@@ -662,7 +662,7 @@ const loadDepartments = async () => {
   loading.value = true
   
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     
     if (response.data.success) {
       departments.value = response.data.data || []
@@ -670,7 +670,7 @@ const loadDepartments = async () => {
       // جلب عدد الأعضاء لكل قسم
       for (let dept of departments.value) {
         try {
-          const membersRes = await axios.get(`http://localhost:8000/api/sections/${dept.id}/members`)
+          const membersRes = await axios.get(`http://TECHSTORM.kesug.com/api/sections/${dept.id}/members`)
           if (membersRes.data.success) {
             dept.members_count = membersRes.data.data?.length || 0
           }
@@ -691,7 +691,7 @@ const loadDepartments = async () => {
 
 const loadAvailableLeaders = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/users-public')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/users-public')
     if (response.data.success) {
       availableLeaders.value = (response.data.data || []).filter(u => 
         u.role !== 'team_leader' && u.role !== 'deputy_leader'
@@ -720,11 +720,11 @@ const saveDepartment = async () => {
       leader_id: departmentForm.leader_id || null
     }
     
-    let url = 'http://localhost:8000/api/sections'
+    let url = 'http://TECHSTORM.kesug.com/api/sections'
     let method = 'POST'
     
     if (editingDepartment.value) {
-      url = `http://localhost:8000/api/sections/${editingDepartment.value.id}`
+      url = `http://TECHSTORM.kesug.com/api/sections/${editingDepartment.value.id}`
       method = 'PUT'
     }
     
@@ -851,7 +851,7 @@ const assignLeader = async () => {
   assignLoading.value = true
   try {
     const response = await axios.put(
-      `http://localhost:8000/api/sections/${selectedDepartment.value.id}`,
+      `http://TECHSTORM.kesug.com/api/sections/${selectedDepartment.value.id}`,
       { leader_id: assignForm.leader_id }
     )
     
@@ -902,7 +902,7 @@ const saveSubSections = async () => {
   subSaving.value = true
   try {
     const response = await axios.put(
-      `http://localhost:8000/api/sections/${selectedDepartment.value.id}`,
+      `http://TECHSTORM.kesug.com/api/sections/${selectedDepartment.value.id}`,
       { sub_sections: subForm.sections.filter(s => s && s.trim() !== '') }
     )
     
@@ -954,7 +954,7 @@ const deleteDepartment = async () => {
   deleteLoading.value = true
   try {
     const response = await axios.delete(
-      `http://localhost:8000/api/sections/${selectedDepartment.value.id}`
+      `http://TECHSTORM.kesug.com/api/sections/${selectedDepartment.value.id}`
     )
     
     if (response.data.success) {
@@ -2063,4 +2063,5 @@ onMounted(() => {
   left: 15px;
   right: auto;
 }
+
 </style>
