@@ -254,7 +254,7 @@ const loadMembers = async () => {
   loading.value = true
   
   try {
-    const response = await axios.get('http://localhost:8000/api/users-public')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/users-public')
     
     if (response.data.success) {
       members.value = response.data.data || []
@@ -277,7 +277,7 @@ const loadMembers = async () => {
 
 const loadSections = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/show-sections')
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     if (response.data.success) {
       sections.value = response.data.data || []
     }
@@ -291,7 +291,7 @@ const loadMemberStats = async () => {
     const token = localStorage.getItem('auth_token')
     
     for (const member of members.value) {
-      const response = await axios.get(`http://localhost:8000/api/users/${member.id}/statistics`, {
+      const response = await axios.get(`http://TECHSTORM.kesug.com/api/users/${member.id}/statistics`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -930,4 +930,5 @@ onMounted(() => {
   padding-left: 40px;
   padding-right: 20px;
 }
+
 </style>
