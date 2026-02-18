@@ -129,11 +129,11 @@
                   <span class="stat-label">مستويات</span>
                 </div>
                 <div class="stat">
-                  <span class="stat-number">13</span>
+                  <span class="stat-number">١٣</span>
                   <span class="stat-label">عضو</span>
                 </div>
                 <div class="stat">
-                  <span class="stat-number">4</span>
+                  <span class="stat-number">٤</span>
                   <span class="stat-label">أقسام</span>
                 </div>
               </div>
@@ -355,37 +355,105 @@ const handleLogin = async () => {
   successMessage.value = '';
 
   try {
+    console.log('📤 Attempting login with:', { email: email.value });
+    
     const response = await api.post('/login', {
       email: email.value,
       password: password.value
     });
 
-    if (response.data.success) {
-      // حفظ البيانات
-      localStorage.setItem('auth_token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      successMessage.value = 'تم تسجيل الدخول بنجاح! جاري التحويل...';
-      
-      // تأخير بسيط قبل التحويل
-      setTimeout(() => {
-        // التوجيه حسب الدور
-        const role = response.data.user.role;
-        if (role === 'team_leader') {
-          router.push('/admin/applicants');
-        } else {
-          router.push('/dashboard');
+    console.log('✅ Login response:', response.data);
+
+    // التحقق من نجاح العملية - عدة احتمالات
+    if (response.data) {
+      // الحالة 1: response.data.success === true
+      if (response.data.success === true) {
+        
+        // حفظ التوكن - عدة احتمالات
+        if (response.data.token) {
+          localStorage.setItem('auth_token', response.data.token);
+        } else if (response.data.access_token) {
+          localStorage.setItem('auth_token', response.data.access_token);
+        } else if (response.data.data?.token) {
+          localStorage.setItem('auth_token', response.data.data.token);
         }
-      }, 1000);
+        
+        // حفظ بيانات المستخدم - عدة احتمالات
+        let userData = null;
+        if (response.data.user) {
+          userData = response.data.user;
+        } else if (response.data.data?.user) {
+          userData = response.data.data.user;
+        }
+        
+        if (userData) {
+          localStorage.setItem('user', JSON.stringify(userData));
+          
+          successMessage.value = '✅ تم تسجيل الدخول بنجاح! جاري التحويل...';
+          
+          // تأخير بسيط قبل التحويل
+          setTimeout(() => {
+            const role = userData.role;
+            if (role === 'team_leader') {
+              router.push('/admin/applicants');
+            } else {
+              router.push('/dashboard');
+            }
+          }, 1000);
+        } else {
+          errorMessage.value = '❌ لم يتم استلام بيانات المستخدم';
+        }
+      }
+      // الحالة 2: response.data.token موجود مباشرة (API بترجع token بدون success)
+      else if (response.data.token || response.data.access_token) {
+        const token = response.data.token || response.data.access_token;
+        localStorage.setItem('auth_token', token);
+        
+        // لو في user data
+        if (response.data.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          successMessage.value = '✅ تم تسجيل الدخول بنجاح! جاري التحويل...';
+          
+          setTimeout(() => {
+            const role = response.data.user.role;
+            if (role === 'team_leader') {
+              router.push('/admin/applicants');
+            } else {
+              router.push('/dashboard');
+            }
+          }, 1000);
+        } else {
+          successMessage.value = '✅ تم تسجيل الدخول! جاري التحويل...';
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 1000);
+        }
+      }
+      // الحالة 3: مفيش success ولا token
+      else {
+        console.log('Unexpected response format:', response.data);
+        errorMessage.value = '❌ استجابة غير متوقعة من السيرفر';
+      }
+    } else {
+      errorMessage.value = '❌ استجابة فارغة من السيرفر';
     }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
+    
     if (error.response) {
-      errorMessage.value = error.response.data?.error || 'خطأ في البريد أو كلمة المرور';
+      // السيرفر رد بخطأ
+      console.log('Error response:', error.response.data);
+      errorMessage.value = error.response.data?.error || 
+                          error.response.data?.message || 
+                          '❌ خطأ في البريد أو كلمة المرور';
     } else if (error.request) {
-      errorMessage.value = 'لا يمكن الاتصال بالسيرفر. تأكد من تشغيل Laravel';
+      // مفيش استجابة من السيرفر
+      console.log('No response from server');
+      errorMessage.value = '❌ لا يمكن الاتصال بالسيرفر';
     } else {
-      errorMessage.value = 'حدث خطأ غير متوقع';
+      // خطأ تاني
+      console.log('Other error:', error.message);
+      errorMessage.value = '❌ حدث خطأ غير متوقع';
     }
   } finally {
     loading.value = false;
