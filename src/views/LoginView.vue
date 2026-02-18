@@ -343,27 +343,35 @@ const handleLogin = async () => {
       password: password.value
     });
 
-    console.log('Login response:', response.data);
+    console.log('✅ Login successful:', response.data);
 
-    if (response.data.success || response.data.token) {
-      // حفظ التوكن
+    // ✅ هنا التعديل المهم - تخزين البيانات
+    if (response.data) {
+      // لو البيانات جاية في response.data مباشرة
       if (response.data.token) {
         localStorage.setItem('auth_token', response.data.token);
-      } else if (response.data.data?.token) {
+      }
+      
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      // لو البيانات جاية في response.data.data
+      if (response.data.data?.token) {
         localStorage.setItem('auth_token', response.data.data.token);
       }
       
-      // حفظ بيانات المستخدم
-      if (response.data.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      } else if (response.data.data?.user) {
+      if (response.data.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
       }
       
-      successMessage.value = 'تم تسجيل الدخول بنجاح! جاري التحويل...';
+      successMessage.value = '✅ تم تسجيل الدخول بنجاح! جاري التحويل...';
       
+      // تأخير بسيط قبل التحويل
       setTimeout(() => {
-        const userRole = response.data.user?.role || response.data.data?.user?.role;
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userRole = user?.role;
+        
         if (userRole === 'team_leader') {
           router.push('/admin/applicants');
         } else {
@@ -371,16 +379,16 @@ const handleLogin = async () => {
         }
       }, 1000);
     } else {
-      errorMessage.value = response.data.error || 'خطأ في البريد أو كلمة المرور';
+      errorMessage.value = '❌ خطأ في البيانات المرسلة من السيرفر';
     }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
     if (error.response) {
-      errorMessage.value = error.response.data?.error || 'خطأ في البريد أو كلمة المرور';
+      errorMessage.value = error.response.data?.error || '❌ خطأ في البريد أو كلمة المرور';
     } else if (error.request) {
-      errorMessage.value = 'لا يمكن الاتصال بالسيرفر. تأكد من تشغيل السيرفر';
+      errorMessage.value = '❌ لا يمكن الاتصال بالسيرفر';
     } else {
-      errorMessage.value = 'حدث خطأ غير متوقع';
+      errorMessage.value = '❌ حدث خطأ غير متوقع';
     }
   } finally {
     loading.value = false;
@@ -1802,3 +1810,4 @@ const handleLogin = async () => {
   background: var(--accent-color);
 }
 </style>
+
