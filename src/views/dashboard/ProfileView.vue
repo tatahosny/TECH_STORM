@@ -350,7 +350,7 @@ const saveChanges = async () => {
   saving.value = true
   
   try {
-    const response = await axios.post(`http://localhost:8000/api/users-update/${user.value.id}`, editForm)
+    const response = await axios.post(`http://TECHSTORM.kesug.com/api/users-update/${user.value.id}`, editForm)
     
     if (response.data.success) {
       // تحديث بيانات المستخدم في localStorage
@@ -394,7 +394,7 @@ const changePassword = async () => {
   changingPassword.value = true
   
   try {
-    const response = await axios.post(`http://localhost:8000/api/users-password/${user.value.id}`, {
+    const response = await axios.post(`http://TECHSTORM.kesug.com/api/users-password/${user.value.id}`, {
       password: passwordForm.new_password
     })
     
@@ -418,7 +418,7 @@ const loadUserStats = async () => {
   try {
     const token = localStorage.getItem('auth_token')
     
-    const response = await axios.get('http://localhost:8000/api/dashboard/my-stats', {
+    const response = await axios.get('http://TECHSTORM.kesug.com/api/dashboard/my-stats', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -1125,4 +1125,5 @@ onMounted(() => {
     right: 20px;
   }
 }
+
 </style>
