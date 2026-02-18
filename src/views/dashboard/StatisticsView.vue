@@ -437,17 +437,17 @@ const loadAllData = async () => {
   
   try {
     // جلب المهام
-    const tasksRes = await axios.get('http://localhost:8000/api/tasks-public')
+    const tasksRes = await axios.get('http://TECHSTORM.kesug.com/api/tasks-public')
     allTasks.value = tasksRes.data.data || []
     console.log('Tasks loaded:', allTasks.value.length)
     
     // جلب المستخدمين
-    const usersRes = await axios.get('http://localhost:8000/api/users-public')
+    const usersRes = await axios.get('http://TECHSTORM.kesug.com/api/users-public')
     allMembers.value = usersRes.data.data || []
     console.log('Users loaded:', allMembers.value.length)
     
     // جلب الأقسام
-    const sectionsRes = await axios.get('http://localhost:8000/api/show-sections')
+    const sectionsRes = await axios.get('http://TECHSTORM.kesug.com/api/show-sections')
     sections.value = sectionsRes.data.data || []
     console.log('Sections loaded:', sections.value.length)
     
@@ -1226,4 +1226,5 @@ onMounted(() => {
 [dir="rtl"] .bar-fill {
   justify-content: flex-start;
 }
+
 </style>
