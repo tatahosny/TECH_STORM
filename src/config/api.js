@@ -1,13 +1,24 @@
 import axios from 'axios';
 
+// تحديد الـ baseURL حسب البيئة
+const getBaseURL = () => {
+    // لو في production (Vercel)
+    if (import.meta.env.PROD) {
+        // استخدم مسار relative عشان الـ rewrites تشتغل
+        return '/api';
+    }
+    // لو في development (local)
+    return 'http://TECHSTORM.kesug.com/api';
+};
+
 const api = axios.create({
-    baseURL: 'http://TECHSTORM.kesug.com/api',
+    baseURL: getBaseURL(),
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
     withCredentials: true,
-    timeout: 10000, // 10 ثواني timeout
+    timeout: 30000, // زودنا الوقت شوية عشان الإنترنت البطئ
 });
 
 // إضافة token للطلبات
@@ -17,7 +28,14 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        console.log('📤 API Request:', config.method.toUpperCase(), config.url);
+        
+        // للـ development بنظهر الرابط كامل
+        if (!import.meta.env.PROD) {
+            console.log('📤 API Request:', config.method.toUpperCase(), config.baseURL + config.url);
+        } else {
+            console.log('📤 API Request:', config.method.toUpperCase(), config.url);
+        }
+        
         return config;
     },
     (error) => {
@@ -34,15 +52,29 @@ api.interceptors.response.use(
     },
     (error) => {
         if (error.response) {
+            // مشكلة من السيرفر
             console.error('❌ Response Error:', error.response.status, error.response.data);
+            
+            // لو الـ token منتهي صلاحيته (401)
+            if (error.response.status === 401) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
         } else if (error.request) {
-            console.error('❌ No Response:', error.request);
+            // مشكلة في الشبكة
+            console.error('❌ No Response from server. Check if server is running:', error.request);
+            
+            // عرض رسالة للمستخدم
+            if (import.meta.env.PROD) {
+                alert('❌ مشكلة في الاتصال بالسيرفر. تأكد من تشغيل السيرفر.');
+            }
         } else {
+            // مشكلة تانية
             console.error('❌ Error:', error.message);
         }
         return Promise.reject(error);
     }
 );
-
 
 export default api;
