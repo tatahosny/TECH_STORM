@@ -3,7 +3,7 @@ import axios from "axios";
 
 // ✅ اقرا الـ API URL من Vercel ENV لو موجودة، وإلا fallback
 const API_BASE =
-  import.meta.env.VITE_API_URL?.replace(/\/+$/, "") || "https://techstorm.kesug.com";
+  import.meta.env.VITE_API_URL?.replace(/\/+$/, "") || "";
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -95,3 +95,4 @@ export const setAuthToken = (token) => {
 export const clearAuthToken = () => {
   localStorage.removeItem("auth_token");
 };
+
