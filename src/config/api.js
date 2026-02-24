@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://techstorm.kesug.com/api',
+    baseURL: 'http://techstorm.kesug.com/api',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -10,3 +10,4 @@ const api = axios.create({
 });
 
 export default api;
+
